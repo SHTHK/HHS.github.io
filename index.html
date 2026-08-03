@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>성황청 캐릭터 프로필 아카이브</title>
+    <!-- 구글 폰트 적용 (성스러운 감성의 Serif & 깔끔한 Sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== 기본 CSS 변수 (하얀색 바탕 + 금색/빨간색 포인트) ===== */
+        :root {
+            --bg-color: #FAFAFA;
+            --card-bg: #FFFFFF;
+            --text-main: #1A1A1A;
+            --text-sub: #555555;
+            --gold-primary: #C5A059;
+            --gold-light: #E8D8B0;
+            --red-primary: #8B0000;
+            --red-light: #FADBD8;
+            --border-color: #E2D8C3;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
+        /* ===== 헤더 ===== */
+        header {
+            background-color: #FFFFFF;
+            border-bottom: 2px solid var(--gold-primary);
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Cinzel', 'Noto Serif KR', serif;
+            color: var(--red-primary);
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--gold-primary);
+            font-size: 0.9rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 컨테이너 ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* ===== 필터 버튼 ===== */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: #FFFFFF;
+            border: 1px solid var(--gold-primary);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--red-primary);
+            color: #FFFFFF;
+            border-color: var(--red-primary);
+        }
+
+        /* ===== 메인 캐릭터 그리드 ===== */
+        .section-title {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.5rem;
+            color: var(--red-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin: 2.5rem 0 1.5rem 0;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .character-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            text-align: center;
+            padding: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        /* 메인 화면 1:1 이미지 비율 & 이미지 효과 제거 */
+        .card-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background-color: #EAEAEA;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            /* 이미지 효과/필터 없음 */
+        }
+
+        .card-name {
+            font-family: 'Noto Serif KR', serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .card-subname {
+            font-size: 0.8rem;
+            color: var(--gold-primary);
+        }
+
+        /* ===== 프로필 상세 페이지 ===== */
+        #profile-view {
+            display: none;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: none;
+            border: 1px solid var(--red-primary);
+            color: var(--red-primary);
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background-color: var(--red-primary);
+            color: #FFFFFF;
+        }
+
+        .profile-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--gold-primary);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 768px) {
+            .profile-layout {
+                flex-direction: row;
+            }
+        }
+
+        /* 프로필 화면 2:3 이미지 비율 & 이미지 효과 제거 */
+        .profile-img-container {
+            flex: 0 0 300px;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .profile-img-wrapper {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            overflow: hidden;
+            background-color: #EAEAEA;
+            border: 1px solid var(--border-color);
+        }
+
+        .profile-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            /* 이미지 효과/필터 없음 */
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-header {
+            border-bottom: 2px solid var(--gold-primary);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-group {
+            font-size: 0.9rem;
+            color: var(--gold-primary);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .profile-title-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .profile-name {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 2.2rem;
+            color: var(--red-primary);
+        }
+
+        .profile-realname {
+            font-size: 1.1rem;
+            color: var(--text-sub);
+        }
+
+        /* 테이블 형태 메타 데이터 */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            color: var(--gold-primary);
+            font-weight: 600;
+        }
+
+        .meta-value {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* 장문 데이터 (성격, 특징 등) */
+        .detail-block {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-title {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.1rem;
+            color: var(--red-primary);
+            border-left: 3px solid var(--red-primary);
+            padding-left: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-content {
+            font-size: 0.98rem;
+            color: var(--text-main);
+            background: #FAFAFA;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            white-space: pre-line; /* 줄바꿈 유지 */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SACRUM ARCHIVE</h1>
+        <p>CLEMENTIA OFFICIAL RECORDS</p>
+    </header>
+
+    <div class="container">
+        <!-- ================= 메인 화면 ================= -->
+        <div id="main-view">
+            <!-- 필터 버튼 -->
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterGroup('all')">전체 보기</button>
+                <button class="filter-btn" onclick="filterGroup('sacrum')">사크룸 2팀</button>
+                <button class="filter-btn" onclick="filterGroup('angel')">천사</button>
+                <button class="filter-btn" onclick="filterGroup('cardinal')">추기경</button>
+            </div>
+
+            <!-- 캐릭터 목록이 출력되는 구역 -->
+            <div id="character-sections"></div>
+        </div>
+
+        <!-- ================= 프로필 상세 화면 ================= -->
+        <div id="profile-view">
+            <button class="back-btn" onclick="showMainView()">← 목록으로 돌아가기</button>
+            
+            <div class="profile-layout">
+                <div class="profile-img-container">
+                    <div class="profile-img-wrapper">
+                        <img id="detail-img" src="" alt="캐릭터 이미지">
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="profile-header">
+                        <div id="detail-group" class="profile-group">소속</div>
+                        <div class="profile-title-group">
+                            <h2 id="detail-name" class="profile-name">이름</h2>
+                            <span id="detail-subname" class="profile-realname"></span>
+                        </div>
+                    </div>
+
+                    <!-- 소속별 가변 정보 메타 그리드 -->
+                    <div id="detail-meta" class="meta-grid"></div>
+
+                    <!-- 긴 텍스트 영역 -->
+                    <div class="detail-block">
+                        <div class="detail-title">성격</div>
+                        <div id="detail-personality" class="detail-content"></div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="detail-title">특징 및 상세</div>
+                        <div id="detail-features" class="detail-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ===== 캐릭터 데이터 정의 ===== */
+        // 이미지 경로 규칙: images/thumb_[id].jpg (1:1), images/detail_[id].jpg (2:3)
+        const characters = [
+            // --- 사크룸 2팀 ---
+            {
+                id: 'hyeyeon',
+                group: 'sacrum',
+                groupName: '사크룸 2팀',
+                name: '장혜연',
+                gender: '여',
+                age: '32세',
+                exp: '3년차',
+                personality: 'ISFJ · 1w2 · so/sx · 중립 선\n자기희생적 · 薄己厚人 · 외강내유 · 엄마같음',
+                features: '남편을 죽인 죄악을 죽이고 사크룸에 들어옴. 자식은 없음. 누군가를 지키지 못하는 것에 대한 죄책감이 매우 강함.'
+            },
+            {
+                id: 'nina',
+                group: 'sacrum',
+                groupName: '사크룸 2팀',
+                name: '니나 로젠탈',
+                gender: '여',
+                age: '24세',
+                exp: '2년차',
+                personality: 'ENFP · 7w6 · sx/so · 혼돈 선\n표면 긍정적 · 내면 불안 · 뛰어난 친화력',
+                features: '가난해서 갈 곳이 없어 사크룸에 지원. 본인의 가난에도 불구하고 남에게 베푸는 것을 좋아함. 가난하다는 사실을 숨기고 있음.'
+            },
+            {
+                id: 'itsuki',
+                group: 'sacrum',
+                groupName: '사크룸 2팀',
+                name: '사나베 이츠키',
+                gender: '남',
+                age: '23세',
+                exp: '2년차',
+                personality: 'ESTP · 9w8 · sx/so · 완전 중립\n살가움 · 화 잘 안 냄 · 성격 좋음 · 훈훈함 (단, 화나면 눈빛과 분위기가 싸해짐)',
+                features: '가족의 빚을 갚기 위해 사크룸에 지원 (원치 않았는데 누나에 의해 떠밀려옴). 자기 자신의 인생을 살고 싶어 함. 누나(미셸)를 극도로 혐오함.'
+            },
+            {
+                id: 'benjamin',
+                group: 'sacrum',
+                groupName: '사크룸 2팀',
+                name: '벤자민 토마손',
+                gender: '남',
+                age: '21세',
+                exp: '7개월차',
+                personality: 'INTP · 5w6 · so/sp · 완전 중립\n담담함 · 체념적 수용 · 서툰 감정 표현',
+                features: '법황청에서 사크룸의 전투원이 되기 위해 자랐음. 기계적인 인물은 아니며 의외로 인간적인 면모가 있음.'
+            },
+            {
+                id: 'raymond',
+                group: 'sacrum',
+                groupName: '사크룸 2팀',
+                name: '레이먼드 에반스',
+                groupRole: '2팀 팀장',
+                gender: '남',
+                age: '33세',
+                exp: '11년차',
+                personality: 'ISTJ · 1w9 · so/sp · 질서 중립\n신실함 · 무뚝뚝한 다정함 · 선함 · 연애 쑥맥',
+                features: '사크룸 2팀의 팀장. 자신의 희생은 영광으로 여기지만, 타인의 희생에 대해서는 진심으로 슬퍼함. 신실한 종교인으로서 사크룸에 자원 지원함.'
+            },
+            {
+                id: 'simona',
+                group: 'sacrum',
+                groupName: '사크룸 2팀',
+                name: '시모나 스텔레아',
+                gender: '여',
+                age: '20세',
+                exp: '1개월차',
+                personality: 'INFP · 6w5 · sx/so · 중립 선\n사람을 매우 경계함(실은 타인을 믿고 싶어 함) · 츤데레 · 까칠함',
+                features: '후방 지원 담당. 사람을 해치는 것에 대한 극심한 두려움이 있음. 가정폭력범인 아버지를 실수로 죽이고 살인 범죄자로서 사크룸에 배치됨.'
+            },
+
+            // --- 천사 소속 ---
+            {
+                id: 'michelle',
+                group: 'angel',
+                groupName: '천사 소속',
+                codeName: '미셸',
+                realName: '사나베 미사키',
+                gender: '여',
+                age: '24세',
+                exp: '2년차',
+                weapon: '소방도끼',
+                personality: 'ESTP · 7w8 · so/sx · 혼돈 중립\n제멋대로 · 흥미주의 · 오만함 · 강한 자신감',
+                features: '이츠키의 누나. 남동생 이츠키를 사크룸에 강제로 버려두다시피 하고 자신은 천사 팀에 들어옴. 신을 전혀 믿지 않으며 무시함.'
+            },
+            {
+                id: 'gabriel',
+                group: 'angel',
+                groupName: '천사 소속',
+                codeName: '가브리엘',
+                realName: '아이작 발몽',
+                gender: '남',
+                age: '27세',
+                exp: '7년차',
+                weapon: '장검',
+                personality: 'INTJ · 1w2 · sp/sx · 질서 중립\n냉소적 · 정의 추구 · 결벽증 · 철저함',
+                features: '아버지가 정당방위(자기보호 살인)를 저질렀음에도 지옥에 떨어진 것에 대해 신의 태도가 정의에 어긋난다고 생각함. 대업을 위한 희생은 필연적인 비용이라 여김.'
+            },
+            {
+                id: 'benedict',
+                group: 'angel',
+                groupName: '천사 소속',
+                codeName: '베네딕트',
+                realName: '이성호',
+                gender: '남',
+                age: '불명',
+                exp: '15년차',
+                weapon: '화염방사기',
+                personality: 'ISTP · 9w8 · sp/so · 중립 선\n노련함 · 귀차니즘 · 전형적인 사회인',
+                features: '물이 차 있고 고무오리가 들어있는 헬멧을 쓰고 다님. 머리와 얼굴이 전혀 보이지 않음. 개인정보 노출을 극도로 꺼리며, 팀의 중재자 역할을 함. 헬멧을 절대 벗지 않고 음식을 먹는 모습도 보이지 않음. (비밀: 머리가 없음)'
+            },
+            {
+                id: 'katarina',
+                group: 'angel',
+                groupName: '천사 소속',
+                codeName: '카타리나',
+                realName: '릴리 스펜서',
+                gender: '여',
+                age: '23세',
+                exp: '3년차',
+                weapon: '로켓런처',
+                personality: 'ENFJ · 1w2 · so/sx · 질서 선\n맑은 눈의 광인 · 말괄량이 · 천연덕스러움',
+                features: '부잣집 영애 출신. 말투만 우아하고 행동은 거침없음. 아름답지 못한 것들(죄악)을 싹 씻어내어 없애는 것이 목표.'
+            },
+
+            // --- 추기경 소속 ---
+            {
+                id: 'valentino',
+                group: 'cardinal',
+                groupName: '추기경 소속',
+                name: '발렌티노 메디치',
+                gender: '남',
+                age: '45세',
+                personality: 'ISTJ · 1w9 · so/sp · 질서 중립\n광신 · 선민사상 · 우월감',
+                features: '예지 능력자로 성황청에서 추앙받고 있으나, 사실 능력은 없으며 모든 예지는 순전한 우연에 불과함. 진실을 숨기기 위해 안간힘을 쓰며 완벽한 성자 연기를 펼침.'
+            },
+            {
+                id: 'justina',
+                group: 'cardinal',
+                groupName: '추기경 소속',
+                name: '유스티나 폰 로엔그린',
+                gender: '여',
+                age: '26세',
+                personality: 'INTJ · 3w4 · sp/so · 질서 중립\n실리주의자 · 능구렁이 · 완벽한 비즈니스 마인드',
+                features: '신앙심은 전혀 없으며, 오직 추기경이라는 위치에서 얻는 권력을 누림. 성황청 내 정부의 영향력이 확대되는 것을 극도로 경계함.'
+            }
+        ];
+
+        /* ===== 화면 전환 및 필터링 로직 ===== */
+
+        function renderMainView(filter = 'all') {
+            const container = document.getElementById('character-sections');
+            container.innerHTML = '';
+
+            const groups = [
+                { key: 'sacrum', title: '사크룸 2팀' },
+                { key: 'angel', title: '천사 팀 (ANGEL)' },
+                { key: 'cardinal', title: '추기경 (CARDINAL)' }
+            ];
+
+            groups.forEach(g => {
+                if (filter !== 'all' && filter !== g.key) return;
+
+                const groupChars = characters.filter(c => c.group === g.key);
+                if (groupChars.length === 0) return;
+
+                const section = document.createElement('div');
+                section.innerHTML = `<h2 class="section-title">${g.title}</h2>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'character-grid';
+
+                groupChars.forEach(char => {
+                    const card = document.createElement('div');
+                    card.className = 'character-card';
+                    card.onclick = () => openProfile(char.id);
+
+                    // 이름 표시 설정 (천사 팀은 활동명 우선)
+                    const displayName = char.codeName ? char.codeName : char.name;
+                    const subName = char.realName ? `(${char.realName})` : (char.groupRole ? `[${char.groupRole}]` : '');
+
+                    card.innerHTML = `
+                        <div class="card-img-wrapper">
+                            <img src="images/thumb_${char.id}.jpg" onerror="this.src='https://via.placeholder.com/300x300/e0e0e0/999999?text=${encodeURIComponent(displayName)}'" alt="${displayName}">
+                        </div>
+                        <div class="card-name">${displayName}</div>
+                        ${subName ? `<div class="card-subname">${subName}</div>` : ''}
+                    `;
+                    grid.appendChild(card);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+        }
+
+        function filterGroup(groupKey) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderMainView(groupKey);
+        }
+
+        function openProfile(id) {
+            const char = characters.find(c => c.id === id);
+            if (!char) return;
+
+            // 기본 텍스트 셋팅
+            document.getElementById('detail-group').innerText = char.groupName + (char.groupRole ? ` · ${char.groupRole}` : '');
+            
+            if (char.codeName) {
+                document.getElementById('detail-name').innerText = char.codeName;
+                document.getElementById('detail-subname').innerText = `본명: ${char.realName}`;
+            } else {
+                document.getElementById('detail-name').innerText = char.name;
+                document.getElementById('detail-subname').innerText = '';
+            }
+
+            // 상세 이미지 (2:3)
+            const detailImg = document.getElementById('detail-img');
+            const displayName = char.codeName ? char.codeName : char.name;
+            detailImg.src = `images/detail_${char.id}.jpg`;
+            detailImg.onerror = function() {
+                this.src = `https://via.placeholder.com/400x600/e0e0e0/999999?text=${encodeURIComponent(displayName)}`;
+            };
+
+            // 소속별 가변 메타 정보 구성
+            const metaContainer = document.getElementById('detail-meta');
+            metaContainer.innerHTML = '';
+
+            let metaHTML = `
+                <div class="meta-item"><span class="meta-label">성별</span><span class="meta-value">${char.gender}</span></div>
+                <div class="meta-item"><span class="meta-label">나이</span><span class="meta-value">${char.age}</span></div>
+            `;
+
+            if (char.exp) {
+                metaHTML += `<div class="meta-item"><span class="meta-label">경력</span><span class="meta-value">${char.exp}</span></div>`;
+            }
+            if (char.weapon) {
+                metaHTML += `<div class="meta-item"><span class="meta-label">전용 무기</span><span class="meta-value">${char.weapon}</span></div>`;
+            }
+
+            metaContainer.innerHTML = metaHTML;
+
+            // 긴 텍스트
+            document.getElementById('detail-personality').innerText = char.personality;
+            document.getElementById('detail-features').innerText = char.features;
+
+            // 뷰 전환
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('profile-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function showMainView() {
+            document.getElementById('profile-view').style.display = 'none';
+            document.getElementById('main-view').style.display = 'block';
+        }
+
+        // 초기 실행
+        window.onload = () => {
+            renderMainView('all');
+        };
+    </script>
+</body>
+</html>
