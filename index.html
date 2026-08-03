@@ -68,32 +68,6 @@
             padding: 2rem 1rem;
         }
 
-        /* ===== 필터 버튼 ===== */
-        .filter-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background-color: #FFFFFF;
-            border: 1px solid var(--gold-primary);
-            color: var(--text-main);
-            padding: 0.6rem 1.2rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            background-color: var(--red-primary);
-            color: #FFFFFF;
-            border-color: var(--red-primary);
-        }
-
         /* ===== 메인 캐릭터 그리드 ===== */
         .section-title {
             font-family: 'Noto Serif KR', serif;
@@ -101,7 +75,7 @@
             color: var(--red-primary);
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.5rem;
-            margin: 2.5rem 0 1.5rem 0;
+            margin: 1.5rem 0 1.5rem 0;
         }
 
         .character-grid {
@@ -134,7 +108,6 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            /* 이미지 효과/필터 없음 */
         }
 
         .card-name {
@@ -207,7 +180,6 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            /* 이미지 효과/필터 없음 */
         }
 
         .profile-info {
@@ -306,14 +278,6 @@
     <div class="container">
         <!-- ================= 메인 화면 ================= -->
         <div id="main-view">
-            <!-- 필터 버튼 -->
-            <div class="filter-container">
-                <button class="filter-btn active" onclick="filterGroup('all')">전체 보기</button>
-                <button class="filter-btn" onclick="filterGroup('sacrum')">사크룸 2팀</button>
-                <button class="filter-btn" onclick="filterGroup('angel')">천사</button>
-                <button class="filter-btn" onclick="filterGroup('cardinal')">추기경</button>
-            </div>
-
             <!-- 캐릭터 목록이 출력되는 구역 -->
             <div id="character-sections"></div>
         </div>
@@ -506,9 +470,9 @@
             }
         ];
 
-        /* ===== 화면 전환 및 필터링 로직 ===== */
+        /* ===== 화면 출력 및 프로필 로직 ===== */
 
-        function renderMainView(filter = 'all') {
+        function renderMainView() {
             const container = document.getElementById('character-sections');
             container.innerHTML = '';
 
@@ -519,8 +483,6 @@
             ];
 
             groups.forEach(g => {
-                if (filter !== 'all' && filter !== g.key) return;
-
                 const groupChars = characters.filter(c => c.group === g.key);
                 if (groupChars.length === 0) return;
 
@@ -552,12 +514,6 @@
                 section.appendChild(grid);
                 container.appendChild(section);
             });
-        }
-
-        function filterGroup(groupKey) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            renderMainView(groupKey);
         }
 
         function openProfile(id) {
@@ -618,7 +574,7 @@
 
         // 초기 실행
         window.onload = () => {
-            renderMainView('all');
+            renderMainView();
         };
     </script>
 </body>
