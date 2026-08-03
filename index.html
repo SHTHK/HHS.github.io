@@ -322,7 +322,6 @@
 
     <script>
         /* ===== 캐릭터 데이터 정의 ===== */
-        // 이름 코드(nameCode)가 추가되었습니다.
         const characters = [
             // --- 사크룸 2팀 ---
             {
@@ -507,13 +506,11 @@
                 groupChars.forEach(char => {
                     const card = document.createElement('div');
                     card.className = 'character-card';
-                    card.onclick = () => openProfile(char.id);
+                    card.onclick = () => openProfile(char.id); // 클릭 시 프로필 열기
 
-                    // 이름 표시 설정 (천사 팀은 활동명 우선)
                     const displayName = char.codeName ? char.codeName : char.name;
                     const subName = char.realName ? `(${char.realName})` : (char.groupRole ? `[${char.groupRole}]` : '');
 
-                    // === 수정된 부분: 이름코드_TN.png ===
                     card.innerHTML = `
                         <div class="card-img-wrapper">
                             <img src="${char.nameCode}_TN.png" onerror="this.src='https://via.placeholder.com/300x300/e0e0e0/999999?text=${encodeURIComponent(displayName)}'" alt="${displayName}">
@@ -529,7 +526,8 @@
             });
         }
 
-        function openProfile(id) {
+        // pushState 인자를 추가하여 브라우저 기록을 남길지 결정 (기본값: true)
+        function openProfile(id, pushState = true) {
             const char = characters.find(c => c.id === id);
             if (!char) return;
 
@@ -544,10 +542,10 @@
                 document.getElementById('detail-subname').innerText = '';
             }
 
-            // === 수정된 부분: 이름코드_cowbosyhot.png ===
+            // === 수정된 부분: cowboyshot 철자 수정 ===
             const detailImg = document.getElementById('detail-img');
             const displayName = char.codeName ? char.codeName : char.name;
-            detailImg.src = `${char.nameCode}_cowbosyhot.png`;
+            detailImg.src = `${char.nameCode}_cowboyshot.png`;
             detailImg.onerror = function() {
                 this.src = `https://via.placeholder.com/400x600/e0e0e0/999999?text=${encodeURIComponent(displayName)}`;
             };
@@ -578,16 +576,43 @@
             document.getElementById('main-view').style.display = 'none';
             document.getElementById('profile-view').style.display = 'block';
             window.scrollTo(0, 0);
+
+            // History API에 현재 프로필 페이지 기록 남기기
+            if (pushState) {
+                history.pushState({ page: 'profile', id: id }, '', `#profile-${id}`);
+            }
         }
 
-        function showMainView() {
+        function showMainView(pushState = true) {
             document.getElementById('profile-view').style.display = 'none';
             document.getElementById('main-view').style.display = 'block';
+            window.scrollTo(0, 0);
+
+            // History API에 메인 페이지로 돌아왔음을 기록
+            if (pushState) {
+                history.pushState({ page: 'main' }, '', window.location.pathname + window.location.search);
+            }
         }
 
-        // 초기 실행
+        /* ===== 뒤로가기(History API) 제어 로직 ===== */
+        // 브라우저의 뒤로가기/앞으로가기 버튼 감지
+        window.addEventListener('popstate', function(event) {
+            // event.state 객체를 확인하여 알맞은 화면을 띄워줌
+            if (event.state && event.state.page === 'profile') {
+                // 이미 기록은 이동했으므로 pushState는 false로 줌
+                openProfile(event.state.id, false); 
+            } else {
+                // state가 없거나 main인 경우 목록 화면
+                document.getElementById('profile-view').style.display = 'none';
+                document.getElementById('main-view').style.display = 'block';
+            }
+        });
+
+        // 초기 화면 실행
         window.onload = () => {
             renderMainView();
+            // 페이지 첫 진입 시 메인 화면이라는 기록(state)을 남겨둠
+            history.replaceState({ page: 'main' }, '', window.location.pathname + window.location.search);
         };
     </script>
 </body>
