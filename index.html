@@ -322,11 +322,12 @@
 
     <script>
         /* ===== 캐릭터 데이터 정의 ===== */
-        // 이미지 경로 규칙: images/thumb_[id].jpg (1:1), images/detail_[id].jpg (2:3)
+        // 이름 코드(nameCode)가 추가되었습니다.
         const characters = [
             // --- 사크룸 2팀 ---
             {
                 id: 'hyeyeon',
+                nameCode: 'HY',
                 group: 'sacrum',
                 groupName: '사크룸 2팀',
                 name: '장혜연',
@@ -338,6 +339,7 @@
             },
             {
                 id: 'nina',
+                nameCode: 'NN',
                 group: 'sacrum',
                 groupName: '사크룸 2팀',
                 name: '니나 로젠탈',
@@ -349,6 +351,7 @@
             },
             {
                 id: 'itsuki',
+                nameCode: 'IT',
                 group: 'sacrum',
                 groupName: '사크룸 2팀',
                 name: '사나베 이츠키',
@@ -360,6 +363,7 @@
             },
             {
                 id: 'benjamin',
+                nameCode: 'BJ',
                 group: 'sacrum',
                 groupName: '사크룸 2팀',
                 name: '벤자민 토마손',
@@ -371,6 +375,7 @@
             },
             {
                 id: 'raymond',
+                nameCode: 'RM',
                 group: 'sacrum',
                 groupName: '사크룸 2팀',
                 name: '레이먼드 에반스',
@@ -383,6 +388,7 @@
             },
             {
                 id: 'simona',
+                nameCode: 'SM',
                 group: 'sacrum',
                 groupName: '사크룸 2팀',
                 name: '시모나 스텔레아',
@@ -396,6 +402,7 @@
             // --- 천사 소속 ---
             {
                 id: 'michelle',
+                nameCode: 'MS',
                 group: 'angel',
                 groupName: '천사 소속',
                 codeName: '미셸',
@@ -409,6 +416,7 @@
             },
             {
                 id: 'gabriel',
+                nameCode: 'GB',
                 group: 'angel',
                 groupName: '천사 소속',
                 codeName: '가브리엘',
@@ -422,6 +430,7 @@
             },
             {
                 id: 'benedict',
+                nameCode: 'BN',
                 group: 'angel',
                 groupName: '천사 소속',
                 codeName: '베네딕트',
@@ -435,6 +444,7 @@
             },
             {
                 id: 'katarina',
+                nameCode: 'KT',
                 group: 'angel',
                 groupName: '천사 소속',
                 codeName: '카타리나',
@@ -450,6 +460,7 @@
             // --- 추기경 소속 ---
             {
                 id: 'valentino',
+                nameCode: 'BT',
                 group: 'cardinal',
                 groupName: '추기경 소속',
                 name: '발렌티노 메디치',
@@ -460,6 +471,7 @@
             },
             {
                 id: 'justina',
+                nameCode: 'JT',
                 group: 'cardinal',
                 groupName: '추기경 소속',
                 name: '유스티나 폰 로엔그린',
@@ -501,9 +513,10 @@
                     const displayName = char.codeName ? char.codeName : char.name;
                     const subName = char.realName ? `(${char.realName})` : (char.groupRole ? `[${char.groupRole}]` : '');
 
+                    // === 수정된 부분: 이름코드_TN.png ===
                     card.innerHTML = `
                         <div class="card-img-wrapper">
-                            <img src="images/thumb_${char.id}.jpg" onerror="this.src='https://via.placeholder.com/300x300/e0e0e0/999999?text=${encodeURIComponent(displayName)}'" alt="${displayName}">
+                            <img src="${char.nameCode}_TN.png" onerror="this.src='https://via.placeholder.com/300x300/e0e0e0/999999?text=${encodeURIComponent(displayName)}'" alt="${displayName}">
                         </div>
                         <div class="card-name">${displayName}</div>
                         ${subName ? `<div class="card-subname">${subName}</div>` : ''}
@@ -531,10 +544,10 @@
                 document.getElementById('detail-subname').innerText = '';
             }
 
-            // 상세 이미지 (2:3)
+            // === 수정된 부분: 이름코드_cowbosyhot.png ===
             const detailImg = document.getElementById('detail-img');
             const displayName = char.codeName ? char.codeName : char.name;
-            detailImg.src = `images/detail_${char.id}.jpg`;
+            detailImg.src = `${char.nameCode}_cowbosyhot.png`;
             detailImg.onerror = function() {
                 this.src = `https://via.placeholder.com/400x600/e0e0e0/999999?text=${encodeURIComponent(displayName)}`;
             };
